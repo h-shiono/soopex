@@ -1,0 +1,35 @@
+{
+  "title": "SOOPEX: Signals of Opportunity Observation Exchange Format",
+  "description": "Specification and Python reference implementation for exchanging Doppler observables extracted from non-cooperative LEO satellite signals (Starlink, OneWeb, Iridium, and others). SOOPEX provides, for Signals of Opportunity (SoOp) observables, what RINEX provides for GNSS observables: a human-readable, git-manageable, constellation-agnostic exchange format with YAML header plus TSV data.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "apache-2.0",
+  "keywords": [
+    "GNSS",
+    "LEO",
+    "signals-of-opportunity",
+    "SoOp",
+    "PNT",
+    "Doppler",
+    "positioning",
+    "navigation",
+    "satellite",
+    "Starlink",
+    "RINEX",
+    "exchange-format"
+  ],
+  "creators": [
+    {
+      "name": "Shiono, Hayato",
+      "affiliation": "Tokyo University of Marine Science and Technology"
+    }
+  ],
+  "communities": [],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/h-shiono/soopex",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}
