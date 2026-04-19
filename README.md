@@ -66,8 +66,8 @@ print(df.columns)  # ['epoch', 'sat_id', 'norad_id', ...]
 # Filter by satellite
 starlink = obs.select(norad_id=54321)
 
-# Filter by time range
-subset = obs.time_slice("2026-03-15T03:10:00Z", "2026-03-15T03:20:00Z")
+# Filter by time range (GPS seconds for the default time_format="gps_seconds")
+subset = obs.time_slice(2247264000.0, 2247265800.0)
 ```
 
 ### Writing a SOOPEX file
@@ -77,6 +77,7 @@ import soopex
 import pandas as pd
 
 header = soopex.Header(
+    format=soopex.FormatInfo(version="0.1.0"),
     session=soopex.Session(
         start_time="2026-03-15T03:00:00Z",
         end_time="2026-03-15T04:00:00Z",
@@ -84,7 +85,9 @@ header = soopex.Header(
         data_source="simulation",
     ),
     site=soopex.Site(
-        approximate_position=soopex.Position(35.6654, 139.7960, 45.2),
+        approximate_position=soopex.ApproximatePosition(
+            latitude_deg=35.6654, longitude_deg=139.7960, height_m=45.2
+        ),
     ),
     observations=soopex.Observations(
         type="dd",
@@ -95,7 +98,9 @@ header = soopex.Header(
         columns=["epoch", "sat_id", "norad_id", "constellation",
                  "azimuth_deg", "elevation_deg", "value", "sigma", "cn0_dBHz"],
     ),
-    orbit_source=soopex.OrbitSource(type="TLE", source="space-track.org", propagator="SGP4"),
+    orbit_source=soopex.OrbitSource(
+        type="TLE", source="space-track.org", propagator="SGP4"
+    ),
 )
 
 data = pd.DataFrame({
@@ -111,7 +116,7 @@ data = pd.DataFrame({
 })
 
 obs = soopex.SoopObs(header=header, data=data)
-obs.write("output.soop")
+obs.write("output.soop")  # .soop.gz for gzip
 ```
 
 ### Validating a SOOPEX file

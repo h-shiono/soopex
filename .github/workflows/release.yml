@@ -1,0 +1,75 @@
+name: release
+
+# Publishes to TestPyPI for every v* tag, and to PyPI for non-prerelease tags
+# (tags matching a bare semver like v1.2.3 — no 'a'/'b'/'rc' suffix).
+#
+# Prerequisites (one-time, see docs/RELEASING.md):
+#   - Configure trusted publishers on TestPyPI and PyPI for this repo
+#     (workflow: release.yml, environment: testpypi / pypi).
+#   - Protect the `pypi` environment with required reviewers on GitHub.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Build distributions
+        run: uv build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-testpypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/soopex
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+
+  publish-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    # Skip for prerelease tags (alpha / beta / rc).
+    if: ${{ !contains(github.ref_name, 'a') && !contains(github.ref_name, 'b') && !contains(github.ref_name, 'rc') }}
+    environment:
+      name: pypi
+      url: https://pypi.org/p/soopex
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
