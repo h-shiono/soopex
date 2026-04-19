@@ -183,13 +183,13 @@ pytest tests/ --cov=soopex --cov-report=term-missing
 ## Scope for v0.1.0-alpha
 
 ### In scope (Tier 1)
-- [ ] `soopex.read()` — Parse .soop files to SoopObs
-- [ ] `soopex.write()` — Write SoopObs to .soop files
-- [ ] `soopex.validate()` — Validate .soop files
-- [ ] Pydantic models for all header sections
-- [ ] .soop.gz transparent read/write
-- [ ] Sample .soop files
-- [ ] Unit tests with >80% coverage
+- [x] `soopex.read()` — Parse .soop files to SoopObs
+- [x] `soopex.write()` — Write SoopObs to .soop files
+- [x] `soopex.validate()` — Validate .soop files
+- [x] Pydantic models for all header sections
+- [x] .soop.gz transparent read/write
+- [x] Sample .soop files (placeholder; physical regeneration pending)
+- [x] Unit tests with >80% coverage (48 tests, 90% coverage at 0.1.0a1)
 
 ### Deferred (Tier 2 — v0.2.0)
 - [ ] `soopex.simulate()` — Generate synthetic Doppler from TLE+SGP4
