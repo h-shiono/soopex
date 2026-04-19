@@ -4,10 +4,24 @@
 
 SOOPEX (Signals of Opportunity Observation Exchange Format) is a specification + Python toolkit for exchanging Doppler observables from non-cooperative LEO satellite signals. This is the reference implementation.
 
-**Repository:** `soopex`  
-**License:** Apache-2.0  
-**Python:** ≥ 3.10  
+**Repository:** `soopex` (public: github.com/h-shiono/soopex)
+**License:** Apache-2.0
+**Python:** ≥ 3.10
 **Package manager:** uv (preferred) or pip
+**DOI (concept):** 10.5281/zenodo.19647800
+
+## Workflow
+
+- **main is protected**: all changes go through feature branches + pull requests.
+  Branch naming: `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`.
+- **Tag-driven releases**: pushing a `v*` tag fires `.github/workflows/release.yml`
+  which publishes to TestPyPI via trusted publishing, and to PyPI for non-prerelease
+  tags. Details in `docs/RELEASING.md`.
+- **Zenodo archive**: GitHub Releases (not git tags alone) are archived by Zenodo.
+  `.zenodo.json` controls the archive metadata for future releases.
+- **CI**: `.github/workflows/ci.yml` runs ruff + pytest on Python 3.10–3.13 for
+  every push/PR. Use `uv run --extra dev <cmd>` in workflow steps (bare `uv run`
+  re-syncs and drops dev extras).
 
 ## Architecture
 
