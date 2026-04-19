@@ -106,8 +106,10 @@ A SOOPEX file consists of three sections:
 
 **Magic line versioning:** The magic line contains `MAJOR.MINOR` only (e.g., `%SOOPEX 0.1`) for parser compatibility determination. The full semantic version including PATCH is specified in `format.version` within the YAML header (e.g., `"0.1.0"`). Parsers MUST use the magic line version to determine compatibility and MAY use `format.version` for detailed version-specific behavior.
 
-- Encoding: UTF-8
-- Line endings: LF (`\n`) RECOMMENDED; CR+LF permitted
+- Encoding: UTF-8. A UTF-8 BOM (`U+FEFF`), if present at the start of the file, MUST be ignored by parsers.
+- Line endings: LF (`\n`) RECOMMENDED; CR+LF permitted. Parsers MUST accept CR+LF by normalizing to LF. Writers SHOULD emit LF only.
+- Trailing content: Content after `%END_DATA`, if present, MUST be ignored by parsers.
+- Blank lines: Blank lines anywhere in the file (including within the data block) MUST be ignored by parsers.
 - Compression: `.soop.gz` (gzip) is the RECOMMENDED compressed form. Parsers SHOULD support transparent decompression.
 
 ---
@@ -160,6 +162,8 @@ site:
 
 #### 4.2.4 `observations`
 
+Fields marked "REQUIRED if type=..." are conditionally required: their absence when the condition is met constitutes a validation error, not merely a recommendation.
+
 ```yaml
 observations:
   type: "dd"                    # REQUIRED: "dd" | "raw_doppler" | "raw_freq"
@@ -187,7 +191,7 @@ observations:
 orbit_source:                          # REQUIRED
   type: "TLE"                          # REQUIRED: "TLE" | "SP3" | "broadcast" | "operator"
   source: "space-track.org"            # REQUIRED: Data source
-  propagator: "SGP4"                   # REQUIRED if type=TLE
+  propagator: "SGP4"                   # OPTIONAL: Default "SGP4" if type=TLE
   tle_file: "starlink_20260315.tle"    # RECOMMENDED: Associated TLE file
   sp3_file: null                       # RECOMMENDED if type=SP3
   epoch_age_max_h: 24                  # RECOMMENDED: Maximum TLE age used (hours)
@@ -298,7 +302,7 @@ Lines beginning with `#` within the data block are comments and MUST be ignored 
 
 - Fields are separated by a single horizontal tab character (`\t`, U+0009). Multiple consecutive tabs represent empty fields.
 - Leading and trailing whitespace within fields MUST NOT be trimmed by parsers, as string fields (e.g., `sat_id`) may legitimately contain spaces.
-- Missing numeric values MUST be represented as the literal string `NaN` (case-sensitive; `nan` and `NAN` are not valid).
+- Missing numeric values MUST be represented as the literal string `NaN` (case-sensitive) by writers. Parsers SHOULD accept common casings (`nan`, `NAN`) for interoperability but MAY issue a warning.
 - Missing string values MUST be represented as an empty string (two consecutive tabs).
 
 **Column contract:** The `observations.columns` array in the header defines the exact set and order of columns in the TSV data block. This array MUST contain at least the required columns for the chosen `observations.type` (see §5.2.1). The order of entries in `observations.columns` MUST exactly match the order of fields in each data row.
@@ -356,7 +360,7 @@ New identifiers MAY be added in minor version updates. Parsers MUST accept unkno
 
 ### 5.4 Missing Data
 
-Missing or unavailable values MUST be represented as `NaN` (case-sensitive) for floating-point columns and as an empty string (consecutive tab characters) for string columns. Integer columns with missing values SHOULD use `-1` as a sentinel where semantically unambiguous, or be promoted to float64 and use `NaN`. Epoch gaps (missing observations) are represented by absence of rows; no explicit gap markers are used.
+Missing or unavailable values MUST be represented as `NaN` (case-sensitive) for floating-point columns and as an empty string (consecutive tab characters) for string columns. Integer columns with missing values MAY be handled by any of: (a) using `-1` as a sentinel where semantically unambiguous, (b) promoting the column to float64 and using `NaN`, or (c) using a nullable-integer type (e.g., pandas `Int64`). Epoch gaps (missing observations) are represented by absence of rows; no explicit gap markers are used.
 
 ### 5.5 Azimuth / Elevation Semantics
 
@@ -386,7 +390,7 @@ The provenance of stored az/el values is declared in the `processing.azel_source
 
 - `gps_seconds` is RECOMMENDED for maximum GNSS interoperability
 - The `time_system` field specifies the reference time scale
-- Leap second handling: parsers MUST handle the GPS–UTC offset correctly when converting between `gps_seconds` and `unix`/`iso8601`
+- Parsers MUST preserve the declared `time_system` and `time_format` as-is; time-scale conversions (e.g., GPST ↔ UTC including leap-second corrections) are the responsibility of downstream processing software, not the SOOPEX parser
 
 ---
 
@@ -401,7 +405,7 @@ SOOPEX follows Semantic Versioning 2.0.0:
 **Compatibility rules:**
 
 - Parsers MUST read any file within the same MAJOR version
-- Parsers MUST ignore unknown optional fields (forward compatibility)
+- Parsers MUST ignore unknown optional fields at any nesting depth (forward compatibility). This rule applies to all unknown keys, not only those under the `extensions` section (see §9).
 - Adding required fields constitutes a MAJOR version change
 
 ---
@@ -435,7 +439,7 @@ extensions:
     note: "Future: Multiple SDR receivers for beam forming"
 ```
 
-Extension schemas are defined in MAJOR version updates. Parsers MUST ignore unknown extensions.
+Extension schemas are defined in MAJOR version updates. Parsers MUST ignore unknown extensions. The `extensions` section is a convention for opt-in experimental features; the general forward-compatibility rule (§7) applies independently to all unknown keys throughout the header.
 
 ---
 
@@ -549,7 +553,9 @@ comments:
 | Satellite-focused v0.1 scope | Match author's research focus; avoid premature abstraction for terrestrial sources | Universal source model (over-engineered for current use cases) |
 | Az/el as RECOMMENDED, not REQUIRED | Allow rare cases of raw-only recording without geometry computation | REQUIRED (excludes valid use cases), OPTIONAL (under-emphasizes importance) |
 | Az/el provenance in header | Enable downstream software to decide whether to recompute from precise orbits | No provenance (users cannot assess accuracy), per-row provenance (excessive overhead) |
-| NaN case-sensitive | Matches pandas/numpy canonical representation; avoids parser complexity | Case-insensitive (ambiguous, extra parsing logic) |
+| NaN canonical form | Writers MUST emit `NaN`; parsers SHOULD accept common casings for interoperability. Matches pandas/numpy canonical representation while avoiding strict rejection of valid data | Fully case-insensitive (no canonical form), fully case-sensitive (rejects interoperable data) |
+| `propagator` OPTIONAL for TLE | SGP4 is the only practical TLE propagator; requiring an explicit field adds boilerplate without information | REQUIRED (current practice universally uses SGP4; no real alternative) |
+| Time-scale conversion out of scope | Parsers store epochs as-is; downstream software handles GPST↔UTC. Avoids embedding leap-second tables in a format parser | Parser handles conversion (complexity, maintenance burden, error-prone) |
 
 ---
 

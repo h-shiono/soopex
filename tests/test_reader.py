@@ -132,3 +132,43 @@ class TestEdgeCases:
         p.write_bytes(b"\xef\xbb\xbf" + minimal_soop_text.encode("utf-8"))
         obs = soopex.read(p)
         assert obs.header.format.version == "0.1.0"
+
+
+class TestSpecDefaults:
+    """Tests for spec-mandated parser leniency (spec §4.2.5, §5.1)."""
+
+    def test_tle_propagator_defaults_to_sgp4(self, tmp_path: Path, minimal_soop_text: str):
+        # Spec §4.2.5: propagator is OPTIONAL with default "SGP4" for type=TLE.
+        # Strip the propagator line from the minimal fixture and verify the default.
+        text = "\n".join(
+            line for line in minimal_soop_text.splitlines() if "propagator:" not in line
+        )
+        p = tmp_path / "no_propagator.soop"
+        p.write_text(text + "\n", encoding="utf-8")
+        obs = soopex.read(p)
+        assert obs.header.orbit_source.type == "TLE"
+        assert obs.header.orbit_source.propagator == "SGP4"
+
+    def test_accepts_lowercase_nan(self, tmp_path: Path, minimal_soop_text: str):
+        text = minimal_soop_text.replace(
+            "2247264001.000\t54321\t-0.342",
+            "2247264001.000\t54321\tnan",
+        )
+        p = tmp_path / "lower_nan.soop"
+        p.write_text(text, encoding="utf-8")
+        obs = soopex.read(p)
+        import math
+
+        assert math.isnan(obs.data.iloc[0]["value"])
+
+    def test_accepts_uppercase_nan(self, tmp_path: Path, minimal_soop_text: str):
+        text = minimal_soop_text.replace(
+            "2247264001.000\t54321\t-0.342",
+            "2247264001.000\t54321\tNAN",
+        )
+        p = tmp_path / "upper_nan.soop"
+        p.write_text(text, encoding="utf-8")
+        obs = soopex.read(p)
+        import math
+
+        assert math.isnan(obs.data.iloc[0]["value"])

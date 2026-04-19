@@ -17,6 +17,10 @@ _GZIP_MAGIC = b"\x1f\x8b"
 _INT_COLUMNS = frozenset({"norad_id", "tone_index", "quality_flag"})
 _STRING_COLUMNS = frozenset({"sat_id", "constellation", "operator_sat_id"})
 
+# Spec §5.1: writers MUST emit "NaN" (case-sensitive), but parsers SHOULD accept
+# common casings for interoperability.
+_NA_TOKENS = ("NaN", "nan", "NAN")
+
 
 class SoopexFormatError(ValueError):
     """Raised when a file is not a well-formed SOOPEX file."""
@@ -127,7 +131,7 @@ def _parse_data(data_lines: list[str], columns: list[str]) -> pd.DataFrame:
         names=columns,
         dtype=str,
         keep_default_na=False,
-        na_values=["NaN"],
+        na_values=list(_NA_TOKENS),
     )
     return _coerce_dtypes(df, columns)
 

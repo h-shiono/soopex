@@ -85,9 +85,10 @@ class OrbitSource(_Base):
     epoch_age_max_h: float | None = None
 
     @model_validator(mode="after")
-    def _check_conditional(self) -> OrbitSource:
+    def _apply_defaults(self) -> OrbitSource:
+        # Spec §4.2.5: propagator is OPTIONAL and defaults to "SGP4" when type="TLE".
         if self.type == "TLE" and not self.propagator:
-            raise ValueError("orbit_source.propagator is required when type='TLE'")
+            self.propagator = "SGP4"
         return self
 
 
