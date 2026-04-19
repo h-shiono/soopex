@@ -24,18 +24,16 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-
-      - name: Sync dev environment
-        run: uv sync --extra dev --python ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Lint
-        run: uv run ruff check .
+        run: uv run --extra dev ruff check .
 
       - name: Format check
-        run: uv run ruff format --check .
+        run: uv run --extra dev ruff format --check .
 
       - name: Test with coverage
-        run: uv run pytest tests/ --cov=soopex --cov-report=term-missing
+        run: uv run --extra dev pytest tests/ --cov=soopex --cov-report=term-missing
 
   build:
     runs-on: ubuntu-latest
