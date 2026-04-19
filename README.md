@@ -3,7 +3,7 @@
 **Signals of Opportunity Observation Exchange Format**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19647800.svg)](https://doi.org/10.5281/zenodo.19647800)
 
 SOOPEX is an open format for storing and exchanging Doppler observables extracted from non-cooperative LEO satellite signals. As RINEX provides a standard exchange format for GNSS observables, SOOPEX provides an exchange format for Signals of Opportunity (SoOp) observables.
 
@@ -167,11 +167,14 @@ If you use SOOPEX in your research, please cite:
   title     = {{SOOPEX}: Signals of Opportunity Observation Exchange Format},
   year      = {2026},
   url       = {https://github.com/h-shiono/soopex},
+  doi       = {10.5281/zenodo.19647800},
   note      = {Draft Specification v0.1}
 }
 ```
 
-<!-- Update with Zenodo DOI once available -->
+The DOI above is the Zenodo [concept DOI](https://help.zenodo.org/faq/#versioning),
+which always resolves to the latest release. For a specific version, see
+<https://zenodo.org/records/19647801> (v0.1.0a1).
 
 ## License
 
