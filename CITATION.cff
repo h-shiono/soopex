@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use SOOPEX in your research, please cite this software."
+title: "SOOPEX: Signals of Opportunity Observation Exchange Format"
+type: software
+authors:
+  - family-names: Shiono
+    given-names: Hayato
+    affiliation: "Tokyo University of Marine Science and Technology"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # TODO: add once registered
+version: "0.1.0a1"
+date-released: "2026-04-19"
+license: Apache-2.0
+repository-code: "https://github.com/h-shiono/soopex"
+url: "https://github.com/h-shiono/soopex"
+abstract: >-
+  SOOPEX (Signals of Opportunity Observation Exchange Format) is an open
+  specification and Python reference implementation for exchanging
+  Doppler observables extracted from non-cooperative LEO satellite
+  signals. It provides, for Signals of Opportunity observables, what
+  RINEX provides for GNSS observables: a human-readable, git-manageable,
+  constellation-agnostic exchange format with a YAML header and
+  TSV data block.
+keywords:
+  - GNSS
+  - LEO
+  - signals-of-opportunity
+  - SoOp
+  - Doppler
+  - positioning
+  - navigation
+  - Starlink
+  - RINEX
+# doi: "10.5281/zenodo.XXXXXXX"  # TODO: add after first Zenodo archive
