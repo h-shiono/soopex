@@ -30,4 +30,10 @@ keywords:
   - navigation
   - Starlink
   - RINEX
-# doi: "10.5281/zenodo.XXXXXXX"  # TODO: add after first Zenodo archive
+# Concept DOI: resolves to the latest release. Per-version DOIs are listed on
+# the Zenodo record page.
+doi: "10.5281/zenodo.19647800"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.19647801"
+    description: "Zenodo archive of v0.1.0a1"
