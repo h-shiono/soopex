@@ -1,0 +1,72 @@
+%SOOPEX 0.1
+%HEADER
+format:
+  version: "0.1.0"
+  generator: "soopex-sim 0.1.0"
+session:
+  start_time: "2026-03-15T03:00:00Z"
+  end_time: "2026-03-15T03:00:05Z"
+  site_id: "TMS1"
+  data_source: "simulation"
+site:
+  name: "TUMSAT Etchujima Campus"
+  approximate_position:
+    latitude_deg: 35.6654
+    longitude_deg: 139.7960
+    height_m: 45.2
+    coordinate_system: "WGS84"
+observations:
+  type: "raw_doppler"
+  doppler_unit: "m/s"
+  reference_frequency_hz: 11325000000
+  time_system: "GPST"
+  time_format: "gps_seconds"
+  columns:
+    - epoch
+    - sat_id
+    - norad_id
+    - constellation
+    - azimuth_deg
+    - elevation_deg
+    - value
+    - sigma
+    - cn0_dBHz
+orbit_source:
+  type: "TLE"
+  source: "space-track.org"
+  propagator: "SGP4"
+  tle_file: "starlink_20260315.tle"
+simulation:
+  software: "soopex-sim 0.1.0"
+  constellation_model: "starlink_gen2_phase1"
+  num_satellites: 4408
+  doppler_noise:
+    model: "gaussian"
+    sigma_m_s: 0.01
+  clock_model:
+    type: "tcxo"
+    drift_rate_m_s_sqrt_s: 0.02
+    initial_bias_hz: 0.0
+  ionospheric_model: "none"
+  tropospheric_model: "none"
+processing:
+  azel_source:
+    method: "sgp4_from_tle"
+    reference: "orbit_source"
+comments:
+  - "Simulated data for testing and demonstration"
+  - "TCXO clock model with Gaussian noise"
+%END_HEADER
+%DATA
+# epoch	sat_id	norad_id	constellation	azimuth_deg	elevation_deg	value	sigma	cn0_dBHz
+2247264001.000	STARLINK-1234	54321	STARLINK	180.3	78.2	-2845.123	0.01	35.0
+2247264001.000	STARLINK-5678	55432	STARLINK	045.1	62.3	1523.456	0.01	32.1
+2247264002.000	STARLINK-1234	54321	STARLINK	180.5	78.0	-2831.987	0.01	34.8
+2247264002.000	STARLINK-5678	55432	STARLINK	045.4	62.1	1537.234	0.01	31.9
+2247264003.000	STARLINK-1234	54321	STARLINK	180.8	77.7	-2818.654	0.01	35.1
+2247264003.000	STARLINK-5678	55432	STARLINK	045.8	61.8	1551.012	0.01	31.5
+2247264004.000	STARLINK-1234	54321	STARLINK	181.0	77.4	-2805.321	0.01	34.5
+2247264004.000	STARLINK-5678	55432	STARLINK	046.1	61.5	1564.789	0.01	31.2
+2247264005.000	STARLINK-1234	54321	STARLINK	181.3	77.1	-2791.988	0.01	34.2
+2247264005.000	STARLINK-5678	55432	STARLINK	046.5	61.2	1578.567	0.01	30.8
+%END_DATA

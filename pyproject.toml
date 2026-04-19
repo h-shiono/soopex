@@ -1,14 +1,86 @@
 [project]
 name = "soopex"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.0a1"
+description = "Signals of Opportunity Observation Exchange Format — reader, writer, and validator"
 readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
 authors = [
-    { name = "h-shiono", email = "hato.gnss@gmail.com" }
+    { name = "h-shiono", email = "hato.gnss@gmail.com" },
 ]
-requires-python = ">=3.12"
-dependencies = []
+keywords = [
+    "GNSS",
+    "LEO",
+    "signals-of-opportunity",
+    "SoOp",
+    "PNT",
+    "Doppler",
+    "positioning",
+    "navigation",
+    "satellite",
+    "RINEX",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "pydantic>=2.0",
+    "ruamel.yaml>=0.18",
+]
+
+[project.optional-dependencies]
+sim = [
+    "sgp4>=2.22",
+    "skyfield>=1.45",
+]
+rinex = [
+    "georinex>=1.16",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+]
+all = [
+    "soopex[sim,rinex,dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/h-shiono/soopex"
+Documentation = "https://github.com/h-shiono/soopex"
+Repository = "https://github.com/h-shiono/soopex"
+Issues = "https://github.com/h-shiono/soopex/issues"
+Specification = "https://github.com/h-shiono/soopex/blob/main/spec/SOOPEX_SPEC_v0.1.md"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/soopex"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

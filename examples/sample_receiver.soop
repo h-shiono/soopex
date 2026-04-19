@@ -1,0 +1,92 @@
+%SOOPEX 0.1
+%HEADER
+format:
+  version: "0.1.0"
+  generator: "manual"
+session:
+  start_time: "2026-03-15T03:00:00Z"
+  end_time: "2026-03-15T03:00:08Z"
+  site_id: "TMS1"
+  data_source: "receiver"
+site:
+  name: "TUMSAT Etchujima Campus"
+  approximate_position:
+    latitude_deg: 35.6654
+    longitude_deg: 139.7960
+    height_m: 45.2
+    coordinate_system: "WGS84"
+observations:
+  type: "dd"
+  diff_interval_s: 1.0
+  doppler_unit: "m/s"
+  reference_frequency_hz: 11325000000
+  time_system: "GPST"
+  time_format: "gps_seconds"
+  columns:
+    - epoch
+    - sat_id
+    - norad_id
+    - constellation
+    - azimuth_deg
+    - elevation_deg
+    - value
+    - sigma
+    - cn0_dBHz
+    - tone_index
+    - quality_flag
+receiver:
+  sdr:
+    type: "HackRF One"
+    sampling_rate_hz: 2000000
+    sample_bits: 8
+    bandwidth_hz: 2000000
+  antenna:
+    type: "parabolic_dish+LNBF"
+    dish_diameter_m: 0.45
+    pointing:
+      mode: "fixed"
+      elevation_deg: 90.0
+    lnb:
+      type: "qro.cz SDR TCXO"
+      lo_frequency_hz: 9750000000
+      lo_stability: "tcxo"
+      lo_stability_ppm: 2.0
+gnss_reference:
+  rinex_file: "TMS100JPN_R_20260740300_15M_MN.rnx"
+  receiver_type: "Septentrio mosaic-X5"
+  time_sync_method: "pps"
+  time_sync_accuracy_s: 0.000001
+orbit_source:
+  type: "TLE"
+  source: "space-track.org"
+  propagator: "SGP4"
+  tle_file: "starlink_20260315.tle"
+processing:
+  doppler_extraction:
+    method: "fft_peak_tracking"
+    fft_size: 65536
+  satellite_identification:
+    method: "sgp4_doppler_matching"
+  lo_drift_correction:
+    method: "epoch_differencing"
+  azel_source:
+    method: "sgp4_from_tle"
+    reference: "orbit_source"
+  quality_control:
+    cn0_mask_dBHz: 15.0
+    elevation_mask_deg: 10.0
+comments:
+  - "Sample receiver data for specification demonstration"
+  - "Clear sky conditions"
+%END_HEADER
+%DATA
+# epoch	sat_id	norad_id	constellation	azimuth_deg	elevation_deg	value	sigma	cn0_dBHz	tone_index	quality_flag
+2247264001.000	STARLINK-1234	54321	STARLINK	180.3	78.2	-0.342	0.15	25.3	4	0
+2247264002.000	STARLINK-1234	54321	STARLINK	180.5	78.0	-0.358	0.16	24.8	4	0
+2247264003.000	STARLINK-1234	54321	STARLINK	180.8	77.7	-0.371	0.15	25.1	4	0
+2247264003.000	STARLINK-5678	55432	STARLINK	045.1	62.3	0.127	0.22	21.1	4	0
+2247264004.000	STARLINK-1234	54321	STARLINK	181.0	77.4	-0.385	0.16	24.5	4	0
+2247264004.000	STARLINK-5678	55432	STARLINK	045.6	62.0	0.142	0.23	20.8	4	0
+2247264005.000	STARLINK-1234	54321	STARLINK	181.3	77.1	-0.398	0.17	23.9	4	2
+2247264005.000	STARLINK-5678	55432	STARLINK	046.0	61.7	0.156	0.25	19.5	4	2
+%END_DATA
